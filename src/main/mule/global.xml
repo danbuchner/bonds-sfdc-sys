@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="8ef8664d-e1af-4a5f-8bde-77ba56db673d" file="properties/${mule.env}.yaml" />
+	<salesforce:sfdc-config name="BrichWealth_Org_Config" doc:name="Salesforce Config" doc:id="27487709-6b66-461c-a8f4-97119dd51bfc" >
+		<salesforce:basic-connection username="${salesforce.username}" password="${secure::salesforce.password}" securityToken="${secure::salesforce.token}"/>
+	</salesforce:sfdc-config>
+	<global-property doc:name="Global Property" doc:id="bd9c2a66-9cbf-43ac-a10c-aa384f94c0c0" name="mule.env" value="dev" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="cdb81829-47b9-4dc1-a029-915456bf949c" file="properties/${mule.env}-secure.yaml" key="${mule.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<global-property doc:name="Global Property" doc:id="aa7e3142-7503-40d6-980e-2cdd04e63d80" name="mule.key" value="myMulesoftKey#123456789" />
+</mule>

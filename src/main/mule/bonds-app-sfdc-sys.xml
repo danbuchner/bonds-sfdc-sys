@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="bonds-app-sfdc-sys-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="bonds-app-sfdc-sys-config" api="resource::aa85ff50-176a-4881-a983-281afb2290c2:bonds-app-sfdc-sys:1.0.0:raml:zip:bonds-app-sfdc-sys.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" >
+	</apikit:config>
+    <flow name="bonds-app-sfdc-sys-main">
+        <http:listener config-ref="bonds-app-sfdc-sys-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="bonds-app-sfdc-sys-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="bonds-app-sfdc-sys-console">
+        <http:listener config-ref="bonds-app-sfdc-sys-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="bonds-app-sfdc-sys-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\bonds:bonds-app-sfdc-sys-config">
+        <logger level="INFO" message="Start get all available bonds" doc:name="Log start get bonds"/>
+		<salesforce:query doc:name="Query all bonds ready for sale" doc:id="e781cf51-23bd-465f-84d7-232ed95fe583" config-ref="BrichWealth_Org_Config">
+			<salesforce:salesforce-query ><![CDATA[SELECT id, Coupon__c, CreatedById, Creation_Date__c, Credit_Quality__c, Offer_Price__c, Face_Value__c, Issuer__c, LastModifiedById, Maturity_Date__c, OwnerId, Ready_for_Sell__c FROM Bond__c WHERE Ready_for_Sell__c =:isReady]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	"isReady" : true
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="All bonds response" doc:id="1a5236be-7b17-4836-9be5-03a1dea458c9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"bonds": payload default [] map ((item, index) -> {
+	"id":item.Id,
+	"coupon": item.Coupon__c,
+	"CreatedById":item.CreatedById,
+	"creationDate":item.Creation_Date__c,
+	"creditQuality":item.Credit_Quality__c,
+	"faceValue":item.Face_Value__c,
+	"offerPrice":item.Offer_Price__c,
+	"issuer":item.Issuer__c,
+	"lastModifiedById":item.LastModifiedById,
+	"maturityDate":item.Maturity_Date__c,
+	"ownerId":item.OwnerId,
+	"readyForSell":item.Ready_for_Sell__c
+	}
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log end get bonds" doc:id="1023cbba-96cc-4ca6-9f4b-8bce44433a39" message="All available bonds have been retrieve successfully"/>
+    </flow>
+    <flow name="get:\accBonds\(id):bonds-app-sfdc-sys-config">
+        <logger level="INFO" doc:name="Start get accBonds" doc:id="75834e6c-1909-47b6-b7bb-0ed2dd051dbc" message="Start get acc bonds"/>
+		<set-variable value="#[attributes.uriParams.'id']" doc:name="accId" doc:id="0bd49c27-19e1-4743-9b58-9e76b1a60eaa" variableName="accId"/>
+        <salesforce:query doc:name="Query bond order" doc:id="d552570c-f140-443a-b923-db5827bf2dae" config-ref="BrichWealth_Org_Config">
+			<salesforce:salesforce-query ><![CDATA[SELECT id, Coupon__c, CreatedById, Creation_Date__c, Credit_Quality__c, Offer_Price__c, Face_Value__c, Issuer__c, LastModifiedById, Maturity_Date__c, OwnerId, Ready_for_Sell__c FROM Bond__c WHERE id IN (SELECT Bond__c FROM Bond_Order__c WHERE Account__c =':accountId')]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	"accountId" : vars.accId
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Acc bonds response" doc:id="00343587-9b44-49cd-8f0a-48b8436abde5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{"accountID":vars.accId} ++
+"bonds": payload default [] map ((item, index) -> {
+	"id":item.Id,
+	"coupon": item.Coupon__c,
+	"CreatedById":item.CreatedById,
+	"creationDate":item.Creation_Date__c,
+	"creditQuality":item.Credit_Quality__c,
+	"faceValue":item.Face_Value__c,
+	"offerPrice":item.Offer_Price__c,
+	"issuer":item.Issuer__c,
+	"lastModifiedById":item.LastModifiedById,
+	"maturityDate":item.Maturity_Date__c,
+	"ownerId":item.OwnerId,
+	"readyForSell":item.Ready_for_Sell__c
+	}
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" message="End get acc bonds" doc:name="End get accBonds"/>
+    </flow>
+    <flow name="post:\bondOrder:application\json:bonds-app-sfdc-sys-config">
+        <logger level="INFO" message="Start post bond order" doc:name="Start get accBonds"/>
+		<set-variable value="#[payload]" doc:name="originalPayload" doc:id="79cefe0c-ecd0-46f6-bc34-dd5d8be306a3" variableName="originalPayload"/>
+		<ee:transform doc:name="Bond order payload" doc:id="f769ff6d-a739-4eac-8fa9-d8a60fc66a72" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	Account__c: payload.accountID,
+	Bond__c: payload.bondid,
+	Order_Type__c: payload.orderType,
+	Quantity__c: payload.quantity
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create doc:name="Create bond order" doc:id="7bd9081b-40f5-434a-ac3a-eb70baf8e3e4" config-ref="BrichWealth_Org_Config" type="Bond_Order__c"/>
+		<ee:transform doc:name="Bond order response" doc:id="933300b5-034a-456e-8157-b3e92b1c22c3">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{"orderId": payload.items[0].id} ++
+vars.originalPayload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End get accBonds" doc:id="22f1f09f-f16c-4f69-bd35-4a614b8456d6" message="End post bond order"/>
+    </flow>
+</mule>

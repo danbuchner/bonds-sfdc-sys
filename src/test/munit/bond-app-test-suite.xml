@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="new-test-suite.xml" />
+	<munit:test name="new-test-suite-get:\bonds:bonds-app-sfdc-sys-configTest" doc:id="61d7e5d9-73b0-4d65-848e-f08f73676908" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock bonds SFDC call" doc:id="8ecc1dde-a328-425e-98ee-0eb7335c793b" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query all bonds ready for sale" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="e781cf51-23bd-465f-84d7-232ed95fe583" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[ [&#10;  {&#10;    Ready_for_Sell__c: "true",&#10;    Offer_Price__c: "10.0",&#10;    Issuer__c: "Facebook Inc.",&#10;    "type": "Bond__c",&#10;    Coupon__c: "2.5",&#10;    CreatedById: "0055f000004676oAAA",&#10;    Face_Value__c: "1000.0",&#10;    OwnerId: "0055f000004676oAAA",&#10;    Creation_Date__c: "2021-10-25T16:00:00.000Z",&#10;    Id: "a015f000008u0nvAAA",&#10;    Maturity_Date__c: "2021-06-14",&#10;    Credit_Quality__c: "AAA",&#10;    LastModifiedById: "0055f000004676oAAA"&#10;  }, &#10;  {&#10;    Ready_for_Sell__c: "true",&#10;    Offer_Price__c: "30.3",&#10;    Issuer__c: "Salesforce.com Inc",&#10;    "type": "Bond__c",&#10;    Coupon__c: "2.6",&#10;    CreatedById: "0055f000004676oAAA",&#10;    Face_Value__c: "1000.0",&#10;    OwnerId: "0055f000004676oAAA",&#10;    Creation_Date__c: "2021-10-24T16:00:00.000Z",&#10;    Id: "a015f000008u0o0AAA",&#10;    Maturity_Date__c: "2026-01-20",&#10;    Credit_Quality__c: "AAA+",&#10;    LastModifiedById: "0055f000004676oAAA"&#10;  }, &#10;  {&#10;    Ready_for_Sell__c: "true",&#10;    Offer_Price__c: "25.0",&#10;    Issuer__c: "Mulesoft Inc",&#10;    "type": "Bond__c",&#10;    Coupon__c: "2.7",&#10;    CreatedById: "0055f000004676oAAA",&#10;    Face_Value__c: "1000.0",&#10;    OwnerId: "0055f000004676oAAA",&#10;    Creation_Date__c: "2021-10-25T16:00:00.000Z",&#10;    Id: "a015f000008u0o1AAA",&#10;    Maturity_Date__c: "2026-01-20",&#10;    Credit_Quality__c: "AAA+",&#10;    LastModifiedById: "0055f000004676oAAA"&#10;  }&#10;]]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\bonds:bonds-app-sfdc-sys-config" doc:id="6e3f26f2-c4e5-4d9e-84a9-bd9c634c3dd9" name="get:\bonds:bonds-app-sfdc-sys-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="dbab8fc5-b8f4-4ccb-8799-00e03e818120" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="new-test-suite-get:\accBonds\(id):bonds-app-sfdc-sys-configTest" doc:id="f31fde7a-a78a-47d4-91fd-49cc31fe807e" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock acc bonds" doc:id="b54a450e-bc03-4826-b6a1-a566954cc7ae" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query bond order" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="d552570c-f140-443a-b923-db5827bf2dae" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[output application/java &#10;---&#10; [&#10;  {&#10;    Ready_for_Sell__c: "true",&#10;    Offer_Price__c: "10.0",&#10;    Issuer__c: "Facebook Inc.",&#10;    "type": "Bond__c",&#10;    Coupon__c: "2.5",&#10;    CreatedById: "0055f000004676oAAA",&#10;    Face_Value__c: "1000.0",&#10;    OwnerId: "0055f000004676oAAA",&#10;    Creation_Date__c: "2021-10-25T16:00:00.000Z",&#10;    Id: "a015f000008u0nvAAA",&#10;    Maturity_Date__c: "2021-06-14",&#10;    Credit_Quality__c: "AAA",&#10;    LastModifiedById: "0055f000004676oAAA"&#10;  }, &#10;  {&#10;    Ready_for_Sell__c: "true",&#10;    Offer_Price__c: "30.3",&#10;    Issuer__c: "Salesforce.com Inc",&#10;    "type": "Bond__c",&#10;    Coupon__c: "2.6",&#10;    CreatedById: "0055f000004676oAAA",&#10;    Face_Value__c: "1000.0",&#10;    OwnerId: "0055f000004676oAAA",&#10;    Creation_Date__c: "2021-10-24T16:00:00.000Z",&#10;    Id: "a015f000008u0o0AAA",&#10;    Maturity_Date__c: "2026-01-20",&#10;    Credit_Quality__c: "AAA+",&#10;    LastModifiedById: "0055f000004676oAAA"&#10;  }, &#10;  {&#10;    Ready_for_Sell__c: "true",&#10;    Offer_Price__c: "25.0",&#10;    Issuer__c: "Mulesoft Inc",&#10;    "type": "Bond__c",&#10;    Coupon__c: "2.7",&#10;    CreatedById: "0055f000004676oAAA",&#10;    Face_Value__c: "1000.0",&#10;    OwnerId: "0055f000004676oAAA",&#10;    Creation_Date__c: "2021-10-25T16:00:00.000Z",&#10;    Id: "a015f000008u0o1AAA",&#10;    Maturity_Date__c: "2026-01-20",&#10;    Credit_Quality__c: "AAA+",&#10;    LastModifiedById: "0055f000004676oAAA"&#10;  }&#10;]]' />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\accBonds\(id):bonds-app-sfdc-sys-config" doc:id="7d741294-ba3b-4914-8211-1bc46fa1bf84" name="get:\accBonds\(id):bonds-app-sfdc-sys-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="38c31f37-3d1c-466d-b3a0-76381c576aaf" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="new-test-suite-post:\bondOrder:application\json:bonds-app-sfdc-sys-configTest" doc:id="ea14ce80-a9db-4bce-8fa0-9126c4ecf34d" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Payload" doc:id="d3d640d4-5ff6-4857-bb00-2e2eebae14c5" >
+				<munit:payload value='#[{&#10;  "bondid": "a015f000008u0nvAAA",&#10;  "quantity": 10,&#10;  "orderType": "BUY",&#10;  "accountID": "0015f000008rRcVAAU"&#10;}]' mediaType="application/java" />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock create bond order object" doc:id="19c044d3-ba0e-4307-8940-ab737bb2eeb5" processor="salesforce:create">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Create bond order" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="7bd9081b-40f5-434a-ac3a-eb70baf8e3e4" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[ {&#10;        success: true,&#10;        id: "a005f000002dQbiAAE"&#10;      }]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\bondOrder:application\json:bonds-app-sfdc-sys-config" doc:id="11f95937-c083-4cef-925b-2cc17e7b4fe0" name="post:\bondOrder:application\json:bonds-app-sfdc-sys-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="a05303d6-d6f2-4e95-9f70-4523ae2d4c1c" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
